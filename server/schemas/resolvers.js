@@ -4,12 +4,23 @@ const { signToken } = require('../utils/auth');
 
 const resolvers = {
   Query:{
-    user: async (parent, { username }) => {
+    user: async (parent, {username}, context) => {
       return User.findOne({ username }).populate('savedBooks');
     },
 
     books: async () => {
       return await Book.find({})
+    },
+    me: async (parent, args, context) => {
+      console.log("Hi")
+      if (context.user) {
+        
+        return User.findOne({ _id: context.user._id }).populate('saveBooks');
+      }
+      throw new AuthenticationError('You need to be logged in!');
+    },
+    myUser: async (parent, {id}) => {
+      return User.findOne({id}).populate('savedBooks')
     }
 
   },
@@ -18,7 +29,7 @@ const resolvers = {
     saveBook: async (parent, {bookId, description, image, link, title, authors}, context) => {
       
       var authorsArray = authors.split(',')
-      console.log(authors)
+      console.log(context.user.username)
       if (context.user) {
         const newBook = await Book.create({
           bookId,
@@ -37,6 +48,14 @@ const resolvers = {
         { $addToSet: { savedBooks: newBook._id } }
       );
     }
+  },
+
+  removeBook: async (parent, {bookId}, context) => {
+    
+    const deleteBook = await Book.deleteOne(
+      { bookId: bookId },
+    )
+    console.log(bookId)
   },
 
     addUser: async (parent, { username, email, password }) => {
