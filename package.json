@@ -1,10 +1,13 @@
 {
+  "homepage": "http://Avialmonanay.github.io/Book-Search",
   "name": "googlebooks-app",
   "version": "1.0.0",
   "description": "",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
+    "predeploy":"npm run build",
+    "deploy":"gh-pages -d build",
     "develop": "concurrently \"cd server && npm run watch\" \"cd client && npm start\"",
     "install": "cd server && npm i && cd ../client && npm i",
     "build": "cd client && npm run build"
@@ -13,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^5.1.0"
+    "concurrently": "^5.1.0",
+    "gh-pages": "^4.0.0"
   }
 }
